@@ -26,6 +26,10 @@ inputs:
     description: "Use Datadog osv-scanner to produce an SBOM"
     required: false
     default: "false"
+  architecture:
+    description: "The architecture of the image to be scanned. Can be amd64, arm64."
+    required: false
+    default: "amd64"
 runs:
   using: "docker"
   image: "Dockerfile"
@@ -36,3 +40,4 @@ runs:
     DD_ENV: ${{ inputs.dd_env }}
     DD_SITE: ${{ inputs.dd_site }}
     USE_OSV_SCANNER: ${{ inputs.use_osv_scanner }}
+    ARCHITECTURE: ${{ inputs.architecture }}
