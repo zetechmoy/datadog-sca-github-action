@@ -5,13 +5,16 @@ FROM ubuntu:22.04
 RUN apt-get update
 RUN apt-get install -y git unzip curl
 RUN apt-get install -y wget apt-transport-https gnupg lsb-release
-RUN curl -L -o /tmp/trivy.deb https://github.com/aquasecurity/trivy/releases/download/v0.48.3/trivy_0.48.3_Linux-64bit.deb  >/dev/null 2>&1 || exit 1
+
+RUN if [ "$ARCHITECTURE" = "arm64" ]; then export TRIVY_ARCHITECTURE="ARM64"; else export TRIVY_ARCHITECTURE="64bit"; fi
+
+RUN curl -L -o /tmp/trivy.deb https://github.com/aquasecurity/trivy/releases/download/v0.48.3/trivy_0.48.3_Linux-$TRIVY_ARCHITECTURE.deb  >/dev/null 2>&1 || exit 1
 RUN dpkg -i /tmp/trivy.deb
 RUN rm -f /tmp/trivy.deb
 
 # Install OSV-Scanner from Datadog
 RUN mkdir /osv-scanner
-RUN curl -L -o /osv-scanner/osv-scanner.zip https://github.com/DataDog/osv-scanner/releases/download/v0.1.0/osv-scanner_0.1.0_linux_amd64.zip >/dev/null 2>&1 || exit 1
+RUN curl -L -o /osv-scanner/osv-scanner.zip https://github.com/DataDog/osv-scanner/releases/download/v0.1.0/osv-scanner_0.1.0_linux_$ARCHITECTURE.zip >/dev/null 2>&1 || exit 1
 RUN (cd /osv-scanner && unzip osv-scanner.zip)
 RUN chmod 755 /osv-scanner/osv-scanner
 
